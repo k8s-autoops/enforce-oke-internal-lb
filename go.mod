@@ -1,4 +1,4 @@
-module github.com/k8s-autoops/enforce-qcloud-internal-lb
+module github.com/k8s-autoops/enforce-oke-internal-lb
 
 go 1.14
 

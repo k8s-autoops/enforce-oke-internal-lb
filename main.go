@@ -15,8 +15,7 @@ import (
 )
 
 const (
-	AnnotationKeySubnet = "autoops.enforce-qcloud-internal-lb/subnet"
-	AnnotationKeyDirect = "autoops.enforce-qcloud-internal-lb/direct"
+	AnnotationKey = "autoops.enforce-oke-internal-lb"
 )
 
 func exit(err *error) {
@@ -64,7 +63,7 @@ func main() {
 				if ns.Annotations == nil {
 					return
 				}
-				if ns.Annotations[AnnotationKeySubnet] == "" {
+				if ok, _ := strconv.ParseBool(ns.Annotations[AnnotationKey]); !ok {
 					return
 				}
 				// 增加注解
@@ -77,16 +76,9 @@ func main() {
 				}
 				*patches = append(*patches, map[string]interface{}{
 					"op":    "replace",
-					"path":  "/metadata/annotations/service.kubernetes.io~1qcloud-loadbalancer-internal-subnetid",
-					"value": ns.Annotations[AnnotationKeySubnet],
+					"path":  "/metadata/annotations/service.beta.kubernetes.io~1oci-load-balancer-internal",
+					"value": "true",
 				})
-				if direct, _ := strconv.ParseBool(ns.Annotations[AnnotationKeyDirect]); direct {
-					*patches = append(*patches, map[string]interface{}{
-						"op":    "replace",
-						"path":  "/metadata/annotations/service.cloud.tencent.com~1direct-access",
-						"value": "true",
-					})
-				}
 				return
 			},
 		),
